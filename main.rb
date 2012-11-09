@@ -4,6 +4,10 @@ class Connect4
     @empty_board = '.' * 42
 
     board = @empty_board
+    board = '............xo....xoxoxo..................'
+    show_board(board)
+
+    puts playable_columns(board)
 
     # show_board(board)
     # puts
@@ -39,6 +43,12 @@ class Connect4
 
   def is_column_playable(board, column)
     board[5 + 6 * column] == '.'
+  end
+
+  def playable_columns(board)
+    (0..6).select do |column|
+      is_column_playable(board, column)
+    end
   end
 
   def show_board(board)
