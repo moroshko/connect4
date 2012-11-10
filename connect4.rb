@@ -65,15 +65,16 @@ class Connect4
     return [@empty_board] if n == 0
 
     player = (n % 2 == 1 ? 'x' : 'o')
-    result = []
+    result = {}
 
     all_boards_after_n_moves(n - 1).each do |board|
       playable_columns(board).each do |column|
-        result << play(board, column, player)
+        new_board = play(board, column, player)
+        result[new_board] = true if winner(board).nil?
       end
     end
 
-    result
+    result.keys
   end
 
   def group_status(board, group)
