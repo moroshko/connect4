@@ -74,5 +74,76 @@ describe Connect4, "#play" do
   end
 end
 
+describe Connect4, "#group_status" do
+  it "should return nil if the group has no win" do
+    c4 = Connect4.new
+    c4.group_status('ooo...ooo...x.....oxoxoxxoxoxxxoxoxxxoxoxx', [13, 14, 15, 16]).should eq(nil)
+    c4.group_status('ooo...ooo...x.....oxoxoxxoxoxxxoxoxxxoxoxx', [6, 7, 8, 9]).should eq(nil)
+    c4.group_status('ooo...ooo...x.....oxoxoxxoxoxxxoxoxxxoxoxx', [0, 6, 12, 18]).should eq(nil)
+    c4.group_status('ooo...ooo...x.....oxoxoxxoxoxxxoxoxxxoxoxx', [1, 7, 13, 19]).should eq(nil)
+    c4.group_status('ooo...ooo...x.....oxoxoxxoxoxxxoxoxxxoxoxx', [21, 26, 31, 36]).should eq(nil)
+    c4.group_status('ooo...ooo...x.....oxoxoxxoxoxxxoxoxxxoxoxx', [17, 23, 29, 35]).should eq(nil)
+  end
+
+  it "should return 'x' if the group has four 'x's" do
+    c4 = Connect4.new
+    c4.group_status('ooo...ooo...x.....oxoxoxxoxoxxxoxoxxxoxoxx', [23, 29, 35, 41]).should eq('x')
+    c4.group_status('ooo...ooo...x.....oxoxoxxoxoxxxx....xoxoxx', [21, 26, 31, 36]).should eq('x')
+  end
+
+  it "should return 'o' if the group has four 'o's" do
+    c4 = Connect4.new
+    c4.group_status('ooox..oooo..x.....oxoxoxxoxoxxxoxoxxxoxox.', [6, 7, 8, 9]).should eq('o')
+    c4.group_status('ooox..ooox..x.....oxoxoxxoxoxxxoo...xoxoxx', [18, 25, 32, 39]).should eq('o')
+    c4.group_status('ooox..ooox..x.....oxoxoxxoxoxxxoo...xoxoxx', [22, 27, 32, 37]).should eq('o')
+  end
+end
+
+describe Connect4, "#winner" do
+  describe "with last move" do
+    it "should return nil if there is no winner" do
+      c4 = Connect4.new
+      c4.winner('..........................................').should eq(nil)
+      c4.winner('............xo....xoxoxo..................').should eq(nil)
+      c4.winner('............xoxoxoxoxoxoxoxoxo............').should eq(nil)
+      c4.winner('xoxoxoxoxoxoxoxoxooxoxoxxoxoxoxoxoxoxoxoxo').should eq(nil)
+    end
+
+    it "should return 'x' if 'x' won" do
+      c4 = Connect4.new
+      c4.winner('............xoxoxoxoxoxoxoxoxox...........').should eq('x')
+      c4.winner('ooo...ooo...x.....oxoxoxxoxoxxxoxoxxxoxoxx').should eq('x')
+    end
+
+    it "should return 'o' if 'o' won" do
+      c4 = Connect4.new
+      c4.winner('oo....xo....ooxx..xoxx....................').should eq('o')
+      c4.winner('........................x.....xxx...oooo..').should eq('o')
+    end
+  end
+
+  describe "without last move" do
+    it "should return nil if the last move didn't win the game" do
+      c4 = Connect4.new
+      c4.winner('ooox..ooox..x.....oxoxoxxoxoxxxoxoxxxoxoxo', 3).should eq(nil)
+      c4.winner('ooox..ooox..x.....oxoxoxxoxoxxxoxoxxxoxoxo', 23).should eq(nil)
+      c4.winner('ooox..ooo...x.....oxoxoxxoxoxxxoxoxxxoxoxo', 41).should eq(nil)
+    end
+
+    it "should return 'x' if last 'x's move won the game" do
+      c4 = Connect4.new
+      c4.winner('ooo...ooo...x.....oxoxoxxoxoxxxoxoxxxoxoxx', 35).should eq('x')
+      c4.winner('ooo...ooox..xox...oxoxoxxoxoxxxoxoxxxoxox.', 14).should eq('x')
+    end
+
+    it "should return 'o' if last 'o's move won the game" do
+      c4 = Connect4.new
+      c4.winner('oooox.ooox..xo....oxoxoxxoxoxxxoxoxxxoxox.', 13).should eq('o')
+      c4.winner('ooox..oooo..x.....oxoxoxxoxoxxxoxoxxxoxox.', 9).should eq('o')
+    end
+  end
+end
+
+
 
 
