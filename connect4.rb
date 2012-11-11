@@ -28,18 +28,26 @@ class Connect4
 
   end
 
-  def play(board, column, player)
-    result = board.dup
+  def playable_cell(board, column)
     lowest = 6 * column
 
-    lowest.upto(lowest + 5) do |i|
-      if result[i] == '.'
-        result[i] = player
-        return result
-      end
+    lowest.upto(lowest + 5) do |cell|
+      return cell if board[cell] == '.'
     end
 
     nil
+  end
+
+  def play(board, column, player)
+    cell = playable_cell(board, column)
+
+    if cell.nil?
+      nil
+    else
+      new_board = board.dup
+      new_board[cell] = player
+      new_board
+    end
   end
 
   def is_column_playable(board, column)
@@ -59,22 +67,6 @@ class Connect4
     puts board[2] +  board[8] + board[14] + board[20] + board[26] + board[32] + board[38]
     puts board[1] +  board[7] + board[13] + board[19] + board[25] + board[31] + board[37]
     puts board[0] +  board[6] + board[12] + board[18] + board[24] + board[30] + board[36]
-  end
-
-  def all_boards_after_n_moves(n)
-    return [@empty_board] if n == 0
-
-    player = (n % 2 == 1 ? 'x' : 'o')
-    result = {}
-
-    all_boards_after_n_moves(n - 1).each do |board|
-      playable_columns(board).each do |column|
-        new_board = play(board, column, player)
-        result[new_board] = true if winner(board).nil?
-      end
-    end
-
-    result.keys
   end
 
   def group_status(board, group)
@@ -101,6 +93,32 @@ class Connect4
     end
 
     nil
+  end
+
+  def can_win(board)
+    player = (board.count('.') % 2 == 0 ? 'x' : 'o')
+
+    playable_columns(board).each do |column|
+      return playable_cell(board, column) unless winner(play(board, column, player)).nil?
+    end
+
+    nil
+  end
+
+  def all_boards_after_n_moves(n)
+    return [@empty_board] if n == 0
+
+    player = (n % 2 == 1 ? 'x' : 'o')
+    result = {}
+
+    all_boards_after_n_moves(n - 1).each do |board|
+      playable_columns(board).each do |column|
+        new_board = play(board, column, player)
+        result[new_board] = true if winner(board).nil? and can_win(board).nil?
+      end
+    end
+
+    result.keys
   end
 
 end

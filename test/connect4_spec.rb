@@ -36,6 +36,24 @@ describe Connect4, "#is_column_playable" do
   end
 end
 
+describe Connect4, "#playable_cell" do
+  describe "the column is not playable" do
+    it "should return nil" do
+      c4 = Connect4.new
+      c4.playable_cell('............xo....xoxoxo..................', 3).should eq(nil)
+    end
+  end
+
+  describe "the column is playable" do
+    it "should return the cell number to play" do
+      c4 = Connect4.new
+      c4.playable_cell('............xo....xoxoxo..................', 2).should eq(14)
+      c4.playable_cell('............xo....xoxoxo..................', 6).should eq(36)
+    end
+  end
+end
+
+
 describe Connect4, "#playable_columns" do
   it "should work correctly" do
     c4 = Connect4.new
@@ -141,6 +159,33 @@ describe Connect4, "#winner" do
       c4.winner('oooox.ooox..xo....oxoxoxxoxoxxxoxoxxxoxox.', 13).should eq('o')
       c4.winner('ooox..oooo..x.....oxoxoxxoxoxxxoxoxxxoxox.', 9).should eq('o')
     end
+  end
+end
+
+describe Connect4, "#can_win" do
+  it "should return nil if 'x' cannot win immediately" do
+    c4 = Connect4.new
+    c4.can_win('..........................................').should eq(nil)
+    c4.can_win('............ox....xoxo..xoo...............').should eq(nil)
+  end
+
+  it "should return nil if 'o' cannot win immediately" do
+    c4 = Connect4.new
+    c4.can_win('xx....xx....oo....o.......................').should eq(nil)
+    c4.can_win('............ox....xox...xoox..............').should eq(nil)
+  end
+
+  it "should return a winning cell if 'x' can win immediately" do
+    c4 = Connect4.new
+    c4.can_win('............ox....xoxo..xoox..............').should eq(6)
+    [33, 36].should include(c4.can_win('............ox....xoxo..xoox..xox.........'))
+    [9, 33].should include(c4.can_win('......ooo...oxox..xoxx..ooox..xxx.........'))
+  end
+
+  it "should return a winning cell if 'o' can win immediately" do
+    c4 = Connect4.new
+    c4.can_win('......o.....o.....xoox..xxxo..x...........').should eq(13)
+    [0, 26, 41].should include(c4.can_win('......xooxxoxxoxoxxoooxxox....oxxoxxoxooo.'))
   end
 end
 
