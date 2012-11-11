@@ -53,7 +53,6 @@ describe Connect4, "#playable_cell" do
   end
 end
 
-
 describe Connect4, "#playable_columns" do
   it "should work correctly" do
     c4 = Connect4.new
@@ -186,6 +185,15 @@ describe Connect4, "#can_win" do
     c4 = Connect4.new
     c4.can_win('......o.....o.....xoox..xxxo..x...........').should eq(13)
     [0, 26, 41].should include(c4.can_win('......xooxxoxxoxoxxoooxxox....oxxoxxoxooo.'))
+  end
+end
+
+describe Connect4, "#mirror" do
+  it "should work correctly" do
+    c4 = Connect4.new
+    c4.mirror('............x.....xo....o.................').should eq('............o.....xo....x.................')
+    c4.mirror('............xo....xoxoxo..................').should eq('..................xoxoxoxo................')
+    c4.mirror('x.....oo....xxx...xo....ooo...xx....o.....').should eq('o.....xx....ooo...xo....xxx...oo....x.....')
   end
 end
 

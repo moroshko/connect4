@@ -105,6 +105,10 @@ class Connect4
     nil
   end
 
+  def mirror(board)
+    board[36..41] + board[30..35] + board[24..29] + board[18..23] + board[12..17] + board[6..11] + board[0..5]
+  end
+
   def all_boards_after_n_moves(n)
     return [@empty_board] if n == 0
 
@@ -114,7 +118,11 @@ class Connect4
     all_boards_after_n_moves(n - 1).each do |board|
       playable_columns(board).each do |column|
         new_board = play(board, column, player)
-        result[new_board] = true if winner(board).nil? and can_win(board).nil?
+
+        if result[new_board].nil? and result[symmetric_board(new_board)].nil? and
+           winner(new_board).nil? and can_win(new_board).nil?
+          result[new_board] = true
+        end
       end
     end
 
