@@ -162,29 +162,78 @@ describe Connect4, "#winner" do
 end
 
 describe Connect4, "#can_win" do
-  it "should return nil if 'x' cannot win immediately" do
-    c4 = Connect4.new
-    c4.can_win('..........................................').should eq(nil)
-    c4.can_win('............ox....xoxo..xoo...............').should eq(nil)
+  describe "cannot win immediately" do
+    describe "'x's move" do
+      it "should return nil" do
+        c4 = Connect4.new
+        c4.can_win('..........................................').should eq(nil)
+        c4.can_win('............ox....xoxo..xoo...............').should eq(nil)
+      end
+    end
+
+    describe "'o's move" do
+      it "should return nil" do
+        c4 = Connect4.new
+        c4.can_win('xx....xx....oo....o.......................').should eq(nil)
+        c4.can_win('............ox....xox...xoox..............').should eq(nil)
+      end
+    end
   end
 
-  it "should return nil if 'o' cannot win immediately" do
-    c4 = Connect4.new
-    c4.can_win('xx....xx....oo....o.......................').should eq(nil)
-    c4.can_win('............ox....xox...xoox..............').should eq(nil)
+  describe "can win immediately" do
+    describe "'x's move" do
+      it "should return a winning cell" do
+        c4 = Connect4.new
+        c4.can_win('............ox....xoxo..xoox..............').should eq(6)
+        [33, 36].should include(c4.can_win('............ox....xoxo..xoox..xox.........'))
+        [9, 33].should include(c4.can_win('......ooo...oxox..xoxx..ooox..xxx.........'))
+      end
+    end
+
+    describe "'o's move" do
+      it "should return a winning cell if 'o' can win immediately" do
+        c4 = Connect4.new
+        c4.can_win('......o.....o.....xoox..xxxo..x...........').should eq(13)
+        [0, 26, 41].should include(c4.can_win('......xooxxoxxoxoxxoooxxox....oxxoxxoxooo.'))
+      end
+    end
+  end
+end
+
+describe Connect4, "#forced_move" do
+  describe "next move is not forced" do
+    describe "'x's move" do
+      it "should return nil" do
+        c4 = Connect4.new
+        c4.forced_move('..........................................').should eq(nil)
+        c4.forced_move('............xo....xoo...oox.........xx....').should eq(nil)
+      end
+    end
+
+    describe "'o's move" do
+      it "should return nil if 'o's next move is not forced" do
+        c4 = Connect4.new
+        c4.forced_move('............xo....x.......................').should eq(nil)
+        c4.forced_move('............xo....xoo...oox.........xx....').should eq(nil)
+      end
+    end
   end
 
-  it "should return a winning cell if 'x' can win immediately" do
-    c4 = Connect4.new
-    c4.can_win('............ox....xoxo..xoox..............').should eq(6)
-    [33, 36].should include(c4.can_win('............ox....xoxo..xoox..xox.........'))
-    [9, 33].should include(c4.can_win('......ooo...oxox..xoxx..ooox..xxx.........'))
-  end
+  describe "next move is forced" do
+    describe "'x's move" do
+      it "should return a cell where 'x' can lose" do
+        c4 = Connect4.new
+        c4.forced_move('......xooo..x.................oxx.........').should eq(10)
+        [7, 15].should include(c4.forced_move('......x.....xoo...xoox..oox...o.....xx....'))
+      end
+    end
 
-  it "should return a winning cell if 'o' can win immediately" do
-    c4 = Connect4.new
-    c4.can_win('......o.....o.....xoox..xxxo..x...........').should eq(13)
-    [0, 26, 41].should include(c4.can_win('......xooxxoxxoxoxxoooxxox....oxxoxxoxooo.'))
+    describe "'o's move" do
+      it "should return a cell where 'o' can lose" do
+        c4 = Connect4.new
+        [0, 31, 39].should include(c4.forced_move('......x.....xoo...xoox..oox...o.....xxx...'))
+      end
+    end
   end
 end
 
