@@ -96,18 +96,19 @@ class Connect4
     board[36..41] + board[30..35] + board[24..29] + board[18..23] + board[12..17] + board[6..11] + board[0..5]
   end
 
-  def all_boards_after_n_moves(n)
-    return [@empty_board] if n == 0
+  def all_boards_after_n_moves(i, n)
+    return [@empty_board] if i == 0
 
-    player = (n % 2 == 1 ? 'x' : 'o')
+    player = (i % 2 == 1 ? 'x' : 'o')
     result = {}
 
-    all_boards_after_n_moves(n - 1).each do |board|
+    all_boards_after_n_moves(i - 1, n).select{ |board| winner(board).nil? }.each do |board|
       playable_columns(board).each do |column|
         new_board = play(board, column, player)
 
-        if result[new_board].nil? and result[mirror(new_board)].nil? and
-           winner(new_board).nil? and can_win(new_board).nil? and forced_move(new_board).nil?
+        if result[new_board].nil? && result[mirror(new_board)].nil? &&
+           winner(new_board).nil? &&
+           (i < n || can_win(new_board).nil? && forced_move(new_board).nil?)
           result[new_board] = true
         end
       end
