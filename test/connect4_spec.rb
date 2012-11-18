@@ -246,6 +246,16 @@ describe Connect4, "#mirror" do
   end
 end
 
+describe Connect4, "#read_database" do
+  it "should work correctly" do
+    c4 = Connect4.new
+    c4.read_database
+    c4.db[8]['......x...........xoxooxo.................'][:game_result] = 0
+    c4.db[8]['o.................xoxoxxo.................'][:game_result] = 1
+    c4.db[8]['x.................xoxooox.................'][:game_result] = 2
+  end
+end
+
 
 
 
