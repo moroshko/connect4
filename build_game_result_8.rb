@@ -26,6 +26,12 @@ my_boards.each_with_index do |board, i|
     game_result = john_boards[board]
   end
 
+  game_result = case game_result
+    when '0' then 'o'
+    when '1' then '.'
+    when '2' then 'x'
+  end
+
   result << "#{board}|#{game_result}"
 end
 
