@@ -137,7 +137,7 @@ class Connect4
   def read_database
     @db = {}
 
-    8.downto(7) do |i|
+    8.downto(0) do |i|
       @db[i] = {}
 
       File.open(File.dirname(__FILE__) + "/database/game_result/#{i}moves.txt").readlines.map(&:chomp).each do |record|
