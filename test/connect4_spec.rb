@@ -108,6 +108,30 @@ describe Connect4, "#group_status" do
   end
 end
 
+describe Connect4, "#winable_group?" do
+  it "should return true if group does not have both 'x' and 'o'" do
+    c4.winable_group?('x.....xo....oxoox.xoxoxoox..........x.....', [6, 13, 20, 27]).should eq(true)
+    c4.winable_group?('x.....xo....oxoox.xoxoxoox..........x.....', [15, 21, 27, 33]).should eq(true)
+    c4.winable_group?('x.....xo....oxoox.xoxoxoox..........x.....', [31, 32, 33, 34]).should eq(true)
+  end
+
+  it "should return false if group has both 'x' and 'o'" do
+    c4.winable_group?('x.....xo....oxoox.xoxoxoox..........x.....', [1, 7, 13, 19]).should eq(false)
+    c4.winable_group?('x.....xo....oxoox.xoxoxoox..........x.....', [16, 21, 26, 31]).should eq(false)
+    c4.winable_group?('x.....xo....oxoox.xoxoxoox..........x.....', [24, 25, 26, 27]).should eq(false)
+  end
+end
+
+describe Connect4, "#draw?" do
+  it "should return true if the game will end with draw for sure" do
+    c4.draw?('xoxoxooxox..oxoxoxxoxxooxoxoxxoxox..oxxoo.').should eq(true)
+  end
+
+  it "should return false if the game can end with win" do
+    c4.draw?('xoxoxooxo...oxoxoxxoxxooxoxoxxoxox..oxxo..').should eq(false)
+  end
+end
+
 describe Connect4, "#cell_to_column" do
   it "should work correctly" do
     c4.cell_to_column(0).should eq(0)
@@ -321,12 +345,12 @@ describe Connect4, "#search_game_result" do
   #   end
   # end
 
-  describe "after 12 moves" do
-    it "should work correctly" do
-      c4.search_game_result('x.....xo....oxo...xoxo..ox................').should eq('x')
-      puts "search_memo = #{c4.search_memo.size}"
-    end
-  end
+  # describe "after 12 moves" do
+  #   it "should work correctly" do
+  #     c4.search_game_result('x.....xo....oxo...xoxo..ox................').should eq('x')
+  #     puts "search_memo = #{c4.search_memo.size}"
+  #   end
+  # end
 
   # describe "after 13 moves" do
   #   it "should work correctly" do
@@ -337,6 +361,7 @@ describe Connect4, "#search_game_result" do
   # describe "after 14 moves" do
   #   it "should work correctly" do
   #     c4.search_game_result('x.....xo....oxoo..xoxox.ox................').should eq('x')
+  #     puts "search_memo = #{c4.search_memo.size}"
   #   end
   # end
 
@@ -352,21 +377,31 @@ describe Connect4, "#search_game_result" do
   #   end
   # end
 
-  # describe "after 17 moves" do
+  describe "after 17 moves" do
+    it "should work correctly" do
+      c4.search_game_result('x.....xo....oxoox.xoxoxoox..........x.....').should eq('x')
+      puts "search_memo = #{c4.search_memo.size}"
+    end
+  end
+
+  # describe "after 18 moves, 5 columns playable" do
   #   it "should work correctly" do
-  #     c4.search_game_result('x.....xo....oxoox.xoxoxoox..........x.....').should eq('x')
+  #     c4.search_game_result('x.....xo....oxooxoxoxoxoox..........x.....').should eq('x')
+  #     puts "search_memo = #{c4.search_memo.size}"
   #   end
   # end
 
-  # describe "after 18 moves" do
+  # describe "after 18 moves, 6 columns playable" do
   #   it "should work correctly" do
-  #     c4.search_game_result('x.....xo....oxooxoxoxoxoox..........x.....').should eq('x')
+  #     c4.search_game_result('x.....xo....oxoox.xoxoxoox..........xo....').should eq('x')
+  #     puts "search_memo = #{c4.search_memo.size}"
   #   end
   # end
 
   # describe "after 19 moves" do
   #   it "should work correctly" do
   #     c4.search_game_result('x.....xo....oxooxoxoxoxooxx.........x.....').should eq('x')
+  #     puts "search_memo = #{c4.search_memo.size}"
   #   end
   # end
 

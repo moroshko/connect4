@@ -60,6 +60,28 @@ class Connect4
     end
   end
 
+  def winable_group?(board, group)
+    x_found = false
+    o_found = false
+
+    0.upto(3) do |cell|
+      state = board[group[cell]]
+
+      return false if (x_found && (state == 'o')) || (o_found && (state == 'x'))
+
+      x_found = true if state == 'x'
+      o_found = true if state == 'o'
+    end
+
+    true
+  end
+
+  def draw?(board)
+    @groups.all? do |group|
+      winable_group?(board, group) == false
+    end
+  end
+
   def cell_to_column(cell)
     cell / 6
   end
@@ -211,6 +233,7 @@ class Connect4
     end
 
     return player if can_win(board, player)
+    return '.' if draw?(board)
 
     forced_cell = forced_move(board)
 
