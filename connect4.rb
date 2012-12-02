@@ -238,6 +238,8 @@ class Connect4
       end
 
       return player if new_game_result == player
+
+      new_game_result
     end
 
     if game_results.include?('.')

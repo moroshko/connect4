@@ -393,6 +393,18 @@ describe Connect4, "#search_game_result" do
   #     c4.search_game_result('xoxoxo......xoxoxoooxoxoxxoxxxoxo...xoooxx').should eq('o')
   #   end
   # end
+
+  # describe "after 41 moves" do
+  #   it "should work correctly" do
+  #     c4.search_game_result('xoxoxoxoxoxoxoxoxooxoxoxxoxoxoxoxoxoxoxox.').should eq('.')
+  #   end
+  # end
+
+  # describe "after 42 moves" do
+  #   it "should work correctly" do
+  #     c4.search_game_result('xoxoxoxoxoxoxoxoxooxoxoxxoxoxoxoxoxoxoxoxo').should eq('.')
+  #   end
+  # end
 end
 
 
