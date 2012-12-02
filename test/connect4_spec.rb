@@ -291,12 +291,59 @@ describe Connect4, "#read_database" do
 end
 
 describe Connect4, "#search_game_result" do
-  it "should work correctly" do
-    c4.search_game_result('xoxoxo......xoxoxoooxoxoxxoxxxoxo...xoooxx').should eq('o')
-    c4.search_game_result('xx....xo....oxoooxxoxoxxooxoxoooxxxo......').should eq('o')
-    c4.search_game_result('xxxo..xooxoxoxooxoxx....oxxo........o.....').should eq('x')
-    c4.search_game_result('x.....xo....oxo...x.....o.................').should eq('x')
+  # describe "after 8 moves" do
+  #   it "should work correctly" do
+  #     c4.search_game_result('x.....xo....oxo...x.....o.................').should eq('x')
+  #   end
+  # end
+  #
+  # describe "after 12 moves" do
+  #   it "should work correctly" do
+  #     c4.search_game_result('x.....xo....oxo...xoxo..ox................').should eq('x')
+  #   end
+  # end
+
+  # describe "after 17 moves" do
+  #   it "should work correctly" do
+  #     c4.search_game_result('x.....xo....oxoox.xoxoxoox..........x.....').should eq('x')
+  #   end
+  # end
+
+  # describe "after 18 moves" do
+  #   it "should work correctly" do
+  #     c4.search_game_result('x.....xo....oxooxoxoxoxoox..........x.....').should eq('x')
+  #   end
+  # end
+
+  describe "after 19 moves" do
+    it "should work correctly" do
+      c4.search_game_result('x.....xo....oxooxoxoxoxooxx.........x.....').should eq('x')
+    end
   end
+
+  # describe "after 20 moves" do
+  #   it "should work correctly" do
+  #     c4.search_game_result('x.....xo....oxoxo.xoxox.oxxoxoo...........').should eq('x')
+  #   end
+  # end
+  #
+  # describe "after 23 moves" do
+  #   it "should work correctly" do
+  #     c4.search_game_result('xxxo..xooxoxoxooxoxx....oxxo........o.....').should eq('x')
+  #   end
+  # end
+  #
+  # describe "after 28 moves" do
+  #   it "should work correctly" do
+  #     c4.search_game_result('xx....xo....oxoooxxoxoxxooxoxoooxxxo......').should eq('o')
+  #   end
+  # end
+  #
+  # describe "after 33 moves" do
+  #   it "should work correctly" do
+  #     c4.search_game_result('xoxoxo......xoxoxoooxoxoxxoxxxoxo...xoooxx').should eq('o')
+  #   end
+  # end
 end
 
 

@@ -175,11 +175,14 @@ class Connect4
   end
 
   def search_game_result(board)
+    @search_memo = {}
+    search_game_result_rec(board)
+  end
+
+  def search_game_result_rec(board)
     champion = winner(board)
 
-    if champion || full_board(board)
-      return champion
-    end
+    return champion if champion
 
     if board.count('.') % 2 == 0
       player = 'x'
@@ -191,7 +194,9 @@ class Connect4
 
     game_results = playable_columns(board).map do |column|
       new_board = play(board, column, player)
-      new_game_result = search_game_result(new_board)
+
+      @search_memo[new_board] ||= search_game_result_rec(new_board)
+      new_game_result = @search_memo[new_board]
 
       return player if new_game_result == player
     end
