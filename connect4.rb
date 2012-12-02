@@ -1,6 +1,6 @@
 class Connect4
 
-  attr_accessor :groups, :group_indices_by_cell, :db
+  attr_accessor :groups, :group_indices_by_cell, :db, :search_memo
 
   def initialize
     @empty_board = '.' * 42
@@ -31,13 +31,13 @@ class Connect4
     end
   end
 
-  def is_column_playable(board, column)
+  def column_playable?(board, column)
     board[5 + 6 * column] == '.'
   end
 
   def playable_columns(board)
     (0..6).select do |column|
-      is_column_playable(board, column)
+      column_playable?(board, column)
     end
   end
 
@@ -60,7 +60,11 @@ class Connect4
     end
   end
 
-  def full_board(board)
+  def cell_to_column(cell)
+    cell / 6
+  end
+
+  def full_board?(board)
     board.count('.') == 0
   end
 
@@ -77,7 +81,7 @@ class Connect4
       end
     end
 
-    full_board(board) ? '.' : nil
+    full_board?(board) ? '.' : nil
   end
 
   def can_win(board, player = nil)
@@ -174,12 +178,26 @@ class Connect4
     end
   end
 
-  def search_game_result(board)
-    @search_memo = {}
-    search_game_result_rec(board)
+  def symmetry_possible?(board)
+    1.upto(3) do |i|
+      column1 = board[18 - 6 * i .. 23 - 6 * i]
+      column2 = board[18 + 6 * i .. 23 + 6 * i]
+
+      0.upto(5) do |k|
+        break if column1[k] == '.' or column2[k] == '.'
+        return false if column1[k] != column2[k]
+      end
+    end
+
+    true
   end
 
-  def search_game_result_rec(board)
+  def search_game_result(board)
+    @search_memo = {}
+    search_game_result_rec(board, symmetry_possible?(board))
+  end
+
+  def search_game_result_rec(board, check_mirror_boards)
     champion = winner(board)
 
     return champion if champion
@@ -192,11 +210,32 @@ class Connect4
       second_player = 'x'
     end
 
-    game_results = playable_columns(board).map do |column|
+    return player if can_win(board, player)
+
+    forced_cell = forced_move(board)
+
+    if forced_cell
+      columns = [cell_to_column(forced_cell)]
+    else
+      columns = playable_columns(board)
+    end
+
+    game_results = columns.map do |column|
       new_board = play(board, column, player)
 
-      @search_memo[new_board] ||= search_game_result_rec(new_board)
-      new_game_result = @search_memo[new_board]
+      @search_memo[new_board] = new_game_result = if @search_memo[new_board]
+        @search_memo[new_board]
+      elsif check_mirror_boards
+        mirrored_new_board = mirror(new_board)
+
+        if @search_memo[mirrored_new_board]
+          @search_memo[mirrored_new_board]
+        else
+          search_game_result_rec(new_board, check_mirror_boards)
+        end
+      else
+        search_game_result_rec(new_board, check_mirror_boards)
+      end
 
       return player if new_game_result == player
     end

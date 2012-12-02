@@ -10,7 +10,7 @@ require './connect4'
 
   result = boards.map do |board|
     game_results = (0..6).map do |column|
-      if c4.is_column_playable(board, column)
+      if c4.column_playable?(board, column)
         new_board = c4.play(board, column, player)
         c4.game_result(new_board)
       else

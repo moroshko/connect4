@@ -26,12 +26,12 @@ describe Connect4, "@group_indices_by_cell" do
   end
 end
 
-describe Connect4, "#is_column_playable" do
+describe Connect4, "#column_playable?" do
   it "should work correctly" do
     board = '............xo....xoxoxo..................'
-    c4.is_column_playable(board, 0).should eq(true)
-    c4.is_column_playable(board, 2).should eq(true)
-    c4.is_column_playable(board, 3).should eq(false)
+    c4.column_playable?(board, 0).should eq(true)
+    c4.column_playable?(board, 2).should eq(true)
+    c4.column_playable?(board, 3).should eq(false)
   end
 end
 
@@ -108,13 +108,25 @@ describe Connect4, "#group_status" do
   end
 end
 
-describe Connect4, "#full_board" do
+describe Connect4, "#cell_to_column" do
+  it "should work correctly" do
+    c4.cell_to_column(0).should eq(0)
+    c4.cell_to_column(7).should eq(1)
+    c4.cell_to_column(14).should eq(2)
+    c4.cell_to_column(21).should eq(3)
+    c4.cell_to_column(28).should eq(4)
+    c4.cell_to_column(35).should eq(5)
+    c4.cell_to_column(41).should eq(6)
+  end
+end
+
+describe Connect4, "#full_board?" do
   it "should return true if the board is full" do
-    c4.full_board('xoxoxoxoxoxoxoxoxooxoxoxxoxoxoxoxoxoxoxoxo').should eq(true)
+    c4.full_board?('xoxoxoxoxoxoxoxoxooxoxoxxoxoxoxoxoxoxoxoxo').should eq(true)
   end
 
   it "should return false if the board is not full" do
-    c4.full_board('xoxoxoxoxoxoxoxoxooxoxoxxoxoxoxoxoxoxoxox.').should eq(false)
+    c4.full_board?('xoxoxoxoxoxoxoxoxooxoxoxxoxoxoxoxoxoxoxox.').should eq(false)
   end
 end
 
@@ -250,6 +262,18 @@ describe Connect4, "#game_result" do
   end
 end
 
+describe Connect4, "#symmetry_possible?" do
+  it "should return true if a symmetric position is possible" do
+    c4.symmetry_possible?('..........................................').should eq(true)
+    c4.symmetry_possible?('x.....xo....oxoox.xoxoxoox..........x.....').should eq(true)
+  end
+
+  it "should return false if a symmetric position is not possible" do
+    c4.symmetry_possible?('x...................................o.....').should eq(false)
+    c4.symmetry_possible?('x.....xo....oxoox.xoxoxoox....o.....x.....').should eq(false)
+  end
+end
+
 describe Connect4, "#read_database" do
   it "should work correctly" do
     c4.db[7]['......xoxoxo......x.......................'].should eq({
@@ -296,10 +320,35 @@ describe Connect4, "#search_game_result" do
   #     c4.search_game_result('x.....xo....oxo...x.....o.................').should eq('x')
   #   end
   # end
-  #
-  # describe "after 12 moves" do
+
+  describe "after 12 moves" do
+    it "should work correctly" do
+      c4.search_game_result('x.....xo....oxo...xoxo..ox................').should eq('x')
+      puts "search_memo = #{c4.search_memo.size}"
+    end
+  end
+
+  # describe "after 13 moves" do
   #   it "should work correctly" do
-  #     c4.search_game_result('x.....xo....oxo...xoxo..ox................').should eq('x')
+  #     c4.search_game_result('x.....xo....oxo...xoxox.ox................').should eq('x')
+  #   end
+  # end
+
+  # describe "after 14 moves" do
+  #   it "should work correctly" do
+  #     c4.search_game_result('x.....xo....oxoo..xoxox.ox................').should eq('x')
+  #   end
+  # end
+
+  # describe "after 15 moves" do
+  #   it "should work correctly" do
+  #     c4.search_game_result('x.....xo....oxoox.xoxox.ox................').should eq('x')
+  #   end
+  # end
+
+  # describe "after 16 moves" do
+  #   it "should work correctly" do
+  #     c4.search_game_result('x.....xo....oxoox.xoxoxoox................').should eq('x')
   #   end
   # end
 
@@ -315,11 +364,11 @@ describe Connect4, "#search_game_result" do
   #   end
   # end
 
-  describe "after 19 moves" do
-    it "should work correctly" do
-      c4.search_game_result('x.....xo....oxooxoxoxoxooxx.........x.....').should eq('x')
-    end
-  end
+  # describe "after 19 moves" do
+  #   it "should work correctly" do
+  #     c4.search_game_result('x.....xo....oxooxoxoxoxooxx.........x.....').should eq('x')
+  #   end
+  # end
 
   # describe "after 20 moves" do
   #   it "should work correctly" do
