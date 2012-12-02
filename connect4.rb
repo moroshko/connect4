@@ -60,20 +60,24 @@ class Connect4
     end
   end
 
+  def full_board(board)
+    board.count('.') == 0
+  end
+
   def winner(board, last_move = nil)
     if last_move.nil?
       @groups.each do |group|
         status = group_status(board, group)
-        return status unless status.nil?
+        return status if status
       end
     else
       @group_indices_by_cell[last_move].each do |group_index|
         status = group_status(board, @groups[group_index])
-        return status unless status.nil?
+        return status if status
       end
     end
 
-    nil
+    full_board(board) ? '.' : nil
   end
 
   def can_win(board, player = nil)
@@ -83,7 +87,7 @@ class Connect4
 
     playable_columns(board).each do |column|
       cell = playable_cell(board, column)
-      return cell unless winner(play(board, column, player), cell).nil?
+      return cell if winner(play(board, column, player), cell) == player
     end
 
     nil
@@ -167,6 +171,35 @@ class Connect4
           end
         end
       end
+    end
+  end
+
+  def search_game_result(board)
+    champion = winner(board)
+
+    if champion || full_board(board)
+      return champion
+    end
+
+    if board.count('.') % 2 == 0
+      player = 'x'
+      second_player = 'o'
+    else
+      player = 'o'
+      second_player = 'x'
+    end
+
+    game_results = playable_columns(board).map do |column|
+      new_board = play(board, column, player)
+      new_game_result = search_game_result(new_board)
+
+      return player if new_game_result == player
+    end
+
+    if game_results.include?('.')
+      '.'
+    else
+      second_player
     end
   end
 

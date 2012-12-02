@@ -108,13 +108,26 @@ describe Connect4, "#group_status" do
   end
 end
 
+describe Connect4, "#full_board" do
+  it "should return true if the board is full" do
+    c4.full_board('xoxoxoxoxoxoxoxoxooxoxoxxoxoxoxoxoxoxoxoxo').should eq(true)
+  end
+
+  it "should return false if the board is not full" do
+    c4.full_board('xoxoxoxoxoxoxoxoxooxoxoxxoxoxoxoxoxoxoxox.').should eq(false)
+  end
+end
+
 describe Connect4, "#winner" do
   describe "with last move" do
-    it "should return nil if there is no winner" do
+    it "should return nil if there is no winner yet" do
       c4.winner('..........................................').should eq(nil)
       c4.winner('............xo....xoxoxo..................').should eq(nil)
       c4.winner('............xoxoxoxoxoxoxoxoxo............').should eq(nil)
-      c4.winner('xoxoxoxoxoxoxoxoxooxoxoxxoxoxoxoxoxoxoxoxo').should eq(nil)
+    end
+
+    it "should return '.' if game finished with draw" do
+      c4.winner('xoxoxoxoxoxoxoxoxooxoxoxxoxoxoxoxoxoxoxoxo').should eq('.')
     end
 
     it "should return 'x' if 'x' won" do
@@ -129,10 +142,14 @@ describe Connect4, "#winner" do
   end
 
   describe "without last move" do
-    it "should return nil if the last move didn't win the game" do
+    it "should return nil if the last move didn't win the game and the game didn't finish yet" do
       c4.winner('ooox..ooox..x.....oxoxoxxoxoxxxoxoxxxoxoxo', 3).should eq(nil)
       c4.winner('ooox..ooox..x.....oxoxoxxoxoxxxoxoxxxoxoxo', 23).should eq(nil)
       c4.winner('ooox..ooo...x.....oxoxoxxoxoxxxoxoxxxoxoxo', 41).should eq(nil)
+    end
+
+    it "should return '.' if the last move finished the game with draw" do
+      c4.winner('xoxoxoxoxoxoxoxoxooxoxoxxoxoxoxoxoxoxoxoxo', 35).should eq('.')
     end
 
     it "should return 'x' if last 'x's move won the game" do
@@ -270,6 +287,15 @@ describe Connect4, "#read_database" do
     c4.db[8]['......x...........xoxooxo.................'][:game_result].should eq('o')
     c4.db[8]['x.................xoxooox.................'][:game_result].should eq('x')
     c4.db[8]['o.................xoxoxxo.................'][:game_result].should eq('.')
+  end
+end
+
+describe Connect4, "#search_game_result" do
+  it "should work correctly" do
+    c4.search_game_result('xoxoxo......xoxoxoooxoxoxxoxxxoxo...xoooxx').should eq('o')
+    c4.search_game_result('xx....xo....oxoooxxoxoxxooxoxoooxxxo......').should eq('o')
+    c4.search_game_result('xxxo..xooxoxoxooxoxx....oxxo........o.....').should eq('x')
+    c4.search_game_result('x.....xo....oxo...x.....o.................').should eq('x')
   end
 end
 
