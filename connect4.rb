@@ -144,17 +144,27 @@ class Connect4
         board = record[0..41]
         game_result = record[43]
 
-        @db[i][board] = { :game_result => game_result }
+        @db[i][board] = {
+          game_result: game_result,
+          win_moves: [],
+          lose_moves: [],
+          draw_moves: [],
+          unknown_moves: []
+        }
 
         if record.size > 44
           game_results = record[45..51].split('')
           player = (i % 2 == 0 ? 'x' : 'o')
           second_player = (i % 2 == 0 ? 'o' : 'x')
 
-          @db[i][board][:win_moves] = (0..6).select { |i| game_results[i] == player }
-          @db[i][board][:lose_moves] = (0..6).select { |i| game_results[i] == second_player }
-          @db[i][board][:draw_moves] = (0..6).select { |i| game_results[i] == '.' }
-          @db[i][board][:unknown_moves] = (0..6).select { |i| game_results[i] == '?' }
+          0.upto(6) do |column|
+            case game_results[column]
+              when player then @db[i][board][:win_moves] << column
+              when second_player then @db[i][board][:lose_moves] << column
+              when '.' then @db[i][board][:draw_moves] << column
+              when '?' then @db[i][board][:unknown_moves] << column
+            end
+          end
         end
       end
     end
